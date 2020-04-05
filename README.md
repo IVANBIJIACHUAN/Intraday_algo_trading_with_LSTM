@@ -10,4 +10,4 @@ Predict move and downs with intraday trade data using LSTM. Achieve better predi
 
 2_LSTM_prediction_upanddown_v2.ipynb: save model and scaler to file "model"
 
-3_LSTM_enhanced_VWAP: Add tools gen_train_test_data.py, LSTM.py, vwap2.py. Create test cases for LSTM-enhanced vwap. Slightly better than tick factor for some specific coefficients.
+3_LSTM_enhanced_VWAP: Add tools gen_train_test_data.py, LSTM.py, vwap2.py. Merge preprocessed quotes and trades (TAQ) data. Create test cases for LSTM-enhanced vwap. Slightly better than tick factor with some specific coefficients.
