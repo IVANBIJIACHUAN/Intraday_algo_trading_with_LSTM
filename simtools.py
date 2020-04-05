@@ -19,7 +19,7 @@ def log_message( label_string ):
 # load and normalize trade file
 def loadtradefile(tickfilename):
     log_message( 'load trades' )
-    trades = pd.read_csv(tickfilename, infer_datetime_format=True)
+    trades = pd.read_csv(tickfilename, index_col=[0])
     log_message( 'load complete' )
     log_message( 'indexing trades' )
     format = '%Y-%m-%d%H:%M:%S.%f'
@@ -33,7 +33,7 @@ def loadtradefile(tickfilename):
     trades = trades.drop(columns=['date', 'time_m', 'ex'])
     log_message( "index trades done" )
     
-    trades.columns = ['symbol', 'suffix', 'trade_size', 'trade_px']
+    trades.columns = ['symbol', 'trade_size', 'trade_px']
     
     # return a dataframe
     return trades
@@ -42,21 +42,22 @@ def loadtradefile(tickfilename):
 # load and normalize file
 def loadquotefile(tickfilename):   
     log_message( 'load quotes' )
-    quotes = pd.read_csv(tickfilename, infer_datetime_format=True)
+    quotes = pd.read_csv(tickfilename, index_col=[0])
     log_message( 'load complete' )
     log_message( 'indexing quotes' )
-    format = '%Y%m%d%H:%M:%S.%f'
+    format = '%Y-%m-%d%H:%M:%S.%f'
 
     # fix padding on time
-    times = quotes['TIME_M'].apply(lambda x: x.zfill(18))
-    timestamps = quotes['DATE'].astype(str) + times
-    times = pd.to_datetime( timestamps, format = format )
+    f = lambda x: x + ".0" if "." not in x else x
+    times = quotes['time_m']
+    timestamps = quotes['date'] + times.apply(f)
+    times = pd.to_datetime(timestamps, format=format)
     quotes.index = times
-    quotes = quotes.drop(columns=['DATE', 'TIME_M'])
+    quotes = quotes.drop(columns=['date', 'time_m', 'ex', 'qu_cond','qu_seqnum', 'qu_cancel', 'sym_suffix'])
     log_message( "index quotes done" )
     
     # standardize column names
-    quotes.columns = ['exch', 'bid_px', 'bid_size', 'ask_px', 'ask_size', 'qu_cond', 'qu_seqnum', 'natbbo_ind', 'qu_cancel', 'qu_source', 'symbol', 'suffix']
+    quotes.columns = ['bid_px', 'bid_size', 'ask_px', 'ask_size',  'natbbo_ind', 'qu_source','symbol']
     
     # return a dataframe
     return quotes
