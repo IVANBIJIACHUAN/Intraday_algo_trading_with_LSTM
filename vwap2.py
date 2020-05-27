@@ -28,9 +28,9 @@ def vwap_target(bar_num, coefs):
 
 # Record a trade in our trade array
 def record_trade(trade_df, idx, trade_px, trade_qty, current_bar, trade_type):
-    trade_df.loc[idx] = [trade_px, trade_qty, current_bar, trade_type]
-
-    return
+    # trade_df.loc[idx] = [trade_px, trade_qty, current_bar, trade_type]
+    return trade_df.append(pd.DataFrame([[float(trade_px), float(trade_qty), int(current_bar), trade_type]],
+                                 columns=trade_df.columns, index=[idx]))
 
 
 # Get next order quantity
@@ -171,7 +171,7 @@ def algo_loop(trading_day, order_side, original_order_quantity, vwap_coefficient
             if live_order:
                 if (order_side == 'b') and (last_price <= live_order_price):
                     fill_size = min(live_order_quantity, last_size)
-                    record_trade(trades, index, live_order_price, fill_size, current_bar, 'p')
+                    trades=record_trade(trades, index, live_order_price, fill_size, current_bar, 'p')
                     total_quantity_filled += fill_size
                     quantity_remaining = max(0, quantity_remaining - fill_size)
                     total_pass_count += 1
@@ -185,7 +185,7 @@ def algo_loop(trading_day, order_side, original_order_quantity, vwap_coefficient
 
                 if (order_side == 's') and (last_price >= live_order_price):
                     fill_size = min(live_order_quantity, last_size)
-                    record_trade(trades, index, live_order_price, fill_size, current_bar, 'p')
+                    trades=record_trade(trades, index, live_order_price, fill_size, current_bar, 'p')
                     total_quantity_filled += fill_size
                     quantity_remaining = max(0, quantity_remaining - fill_size)
                     # print("{} passive. quantity_behind:{} new_order_quantity:{}".format(index, quantity_behind,
@@ -277,7 +277,7 @@ def algo_loop(trading_day, order_side, original_order_quantity, vwap_coefficient
                 #     quantity_behind = quantity_remaining
                 new_order_quantity = calc_order_quantity(quantity_behind, round_lot, quantity_remaining)
 
-                record_trade(trades, index, new_trade_price, new_order_quantity, current_bar, 'a')
+                trades=record_trade(trades, index, new_trade_price, new_order_quantity, current_bar, 'a')
 
                 # update quantity remaining
                 quantity_remaining = max(0, quantity_remaining - new_order_quantity)
@@ -313,7 +313,7 @@ def algo_loop(trading_day, order_side, original_order_quantity, vwap_coefficient
                 new_order_quantity = calc_order_quantity(quantity_behind, round_lot, quantity_remaining)
                 # print("{} aggresive. quantity_behind:{} new_order_quantity:{}".format(index, quantity_behind,
                 #                                                                       new_order_quantity))
-                record_trade(trades, index, new_trade_price, new_order_quantity, current_bar, 'a')
+                trades=record_trade(trades, index, new_trade_price, new_order_quantity, current_bar, 'a')
 
                 # update quantity remaining
                 quantity_remaining = max(0, quantity_remaining - new_order_quantity)

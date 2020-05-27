@@ -66,7 +66,9 @@ def loadquotefile(tickfilename):
 # NOTE this currently doesn't support tickers with suffixes...
 def makeTAQfile(trades, quotes):
     log_message( 'start merge' )
-    taq = quotes.merge( trades, how = 'outer', on = 'symbol', left_index = True, right_index = True )
+    # taq = quotes.merge( trades, how = 'outer', on = 'symbol', left_index = True, right_index = True )
+    taq = pd.concat([quotes, trades])
+    taq.sort_index(inplace=True)
     log_message( 'end merge' )
     return taq
     
