@@ -2,7 +2,7 @@
 
 Project for algo trading course.
 
-Predict move and downs with intraday trade data using LSTM. Achieve better prediction power than tick factor (ewa momentum).
+Predict price movements with intraday trade data using LSTM. Achieve better prediction power than tick factor (ewa momentum).
 
 2020/04/04 Update: 
 
